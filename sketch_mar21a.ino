@@ -3,17 +3,21 @@
 
 //Carrega a biblioteca do sensor ultrassonico
 #include <Ultrasonic.h>
+#include <RotaryEncoder.h>
+
 
 //Define os pinos para o trigger e echo
 #define pino_trigger 4
 #define pino_echo 5
 #define X0 16.5
 
+RotaryEncoder encoder(A2, A3);
+
 //Inicializa o sensor nos pinos definidos acima
 Ultrasonic ultrasonic(pino_trigger, pino_echo);
 float cmMsec, soma, media, erro, erroPrev = 0;
 long microsec;
-int controle, Kp = 110, Kd;
+int controle, Kp = 0, Kd = 0, Ki = 0, select = 0, valor = 0;
 
 
 void setup()
@@ -21,8 +25,7 @@ void setup()
   Serial.begin(9600);
   Serial.println("Lendo dados do sensor...");
   pinMode(3, OUTPUT);
-  pinMode(A0, INPUT);
-  pinMode(A1, INPUT);
+  pinMode(7, INPUT);
   TCCR2A = (1 << COM2B1) | (1 << WGM21) | (1 << WGM20); // Modo Fast PWM, não-invertido
   TCCR2B = (1 << CS20); // Prescaler de 8
    
@@ -32,15 +35,88 @@ void setup()
 
 void loop()
 {
-  Kd = analogRead(A3) / 8;
-  Kp = analogRead(A0) / 4;
+  valor = digitalRead(7);
+  if (valor != 1)
+  {
+    if(select == 2) select = 0;
+    else select++;
+    while (digitalRead(7) == 0)
+      delay(10);
+  }
+
+  static int pos = 0;
+  encoder.tick();
+  RotaryEncoder::Direction dir = encoder.getDirection();
+
+  if (dir == RotaryEncoder::Direction::COUNTERCLOCKWISE) {
+    Serial.print("entrou");
+    if(select == 0){
+      Kp++;
+      Serial.print("Kd: ");
+      Serial.print(Kd);
+      Serial.print(" Kp: ");
+      Serial.println(Kp);
+      Serial.print(" Ki: ");
+      Serial.println(Ki);
+    }
+    else if(select == 1){
+      Kd++;
+      Serial.print("Kd: ");
+      Serial.print(Kd);
+      Serial.print(" Kp: ");
+      Serial.println(Kp);
+      Serial.print(" Ki: ");
+      Serial.println(Ki);
+    }
+    else if(select == 2){
+      Ki++;
+      Serial.print("Kd: ");
+      Serial.print(Kd);
+      Serial.print(" Kp: ");
+      Serial.println(Kp);
+      Serial.print(" Ki: ");
+      Serial.println(Ki);
+    }
+  }
+
+else if (dir == RotaryEncoder::Direction::CLOCKWISE) {
+
+    if(select == 0){
+      Kp--;
+            Serial.print("Kd: ");
+      Serial.print(Kd);
+      Serial.print(" Kp: ");
+      Serial.println(Kp);
+      Serial.print(" Ki: ");
+      Serial.println(Ki);
+    }
+    else if(select == 1){
+      Kd--;
+      Serial.print("Kd: ");
+      Serial.print(Kd);
+      Serial.print(" Kp: ");
+      Serial.println(Kp);
+      Serial.print(" Ki: ");
+      Serial.println(Ki);
+    }
+    else if(select == 2){
+      Ki--;
+      Serial.print("Kd: ");
+      Serial.print(Kd);
+      Serial.print(" Kp: ");
+      Serial.println(Kp);
+      Serial.print(" Ki: ");
+      Serial.println(Ki);
+    }
+  }
+
+  //Le as 
   soma = 0;
   //Le as informacoes do sensor, em cm e pol
   for(int i = 0;i < 20; i++){
     microsec = ultrasonic.timing();
     cmMsec = ultrasonic.convert(microsec, Ultrasonic::CM);
     soma += cmMsec;
-    delay(2);
   } 
   media = soma / 20;
 
@@ -51,11 +127,7 @@ void loop()
   OCR2B = 128 + controle;
 
   //Serial.print("Media de distancia em cm: ");
-  Serial.print("Kd: ");
-  Serial.print(Kd);
-  Serial.print(" Kp: ");
-  Serial.println(Kp);
+  
   //OCR2B = analogRead(A0) / 4;
   erroPrev = erro;
-  delay(50);
 }
