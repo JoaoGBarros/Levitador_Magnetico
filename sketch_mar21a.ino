@@ -79,11 +79,11 @@ void loop()
     }
   }
 
-else if (dir == RotaryEncoder::Direction::CLOCKWISE) {
-
+  else if (dir == RotaryEncoder::Direction::CLOCKWISE) {
+  
     if(select == 0){
       Kp--;
-            Serial.print("Kd: ");
+      Serial.print("Kd: ");
       Serial.print(Kd);
       Serial.print(" Kp: ");
       Serial.println(Kp);
@@ -109,6 +109,32 @@ else if (dir == RotaryEncoder::Direction::CLOCKWISE) {
       Serial.println(Ki);
     }
   }
+  else{
+    if(select == 0){
+      Serial.print("Kd: ");
+      Serial.print(Kd);
+      Serial.print(" Kp: ");
+      Serial.println(Kp);
+      Serial.print(" Ki: ");
+      Serial.println(Ki);
+    }
+    else if(select == 1){
+      Serial.print("Kd: ");
+      Serial.print(Kd);
+      Serial.print(" Kp: ");
+      Serial.println(Kp);
+      Serial.print(" Ki: ");
+      Serial.println(Ki);
+    }
+    else if(select == 2){
+      Serial.print("Kd: ");
+      Serial.print(Kd);
+      Serial.print(" Kp: ");
+      Serial.println(Kp);
+      Serial.print(" Ki: ");
+      Serial.println(Ki);
+    }  
+  }
 
   //Le as 
   soma = 0;
@@ -127,6 +153,15 @@ else if (dir == RotaryEncoder::Direction::CLOCKWISE) {
   OCR2B = 128 + controle;
 
   //Serial.print("Media de distancia em cm: ");
+
+  Serial.print("Media: ");
+  Serial.println(media);
+
+  Serial.print("Erro: ");
+  Serial.println(erro);
+
+  Serial.print("Controle: ");
+  Serial.println(controle);
   
   //OCR2B = analogRead(A0) / 4;
   erroPrev = erro;
