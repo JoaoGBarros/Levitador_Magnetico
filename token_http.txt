@@ -1,0 +1,3 @@
+glc_eyJvIjoiMTM4MjAxMyIsIm4iOiJzdGFjay0xMjA2MDA5LWludGVncmF0aW9uLWVzcDMyX3BvbGljeSIsImsiOiJwMWg5MWlhUTIwRzcxM1BTNzlyRnF6aGQiLCJtIjp7InIiOiJwcm9kLXNhLWVhc3QtMSJ9fQ==
+
+"[{\"name\": \"test.metric\", \"value\": 25.3, \"time\": " + String(time(NULL)) + "\"tags\": [\"foo=novo_foo\", \"source=grafana_cloud_docs\"]}]"
