@@ -1,6 +1,7 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include <time.h> // Para time() e NTP
 
 // WiFi credentials
 const char* ssid = "edge 40 neo_8360";
@@ -17,6 +18,17 @@ float valueKd = 12.7;
 float valueKi = 11.5;
 float valueErro = 9.4;
 
+// Sincroniza o horário via NTP
+void syncTime() {
+  configTime(0, 0, "pool.ntp.org", "time.nist.gov"); // Configura NTP
+  Serial.println("Waiting for NTP time sync...");
+  while (time(nullptr) < 24 * 3600) { // Espera até obter um timestamp válido
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nTime synchronized!");
+}
+
 void setup() {
   Serial.begin(115200);
   
@@ -30,6 +42,9 @@ void setup() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+
+  // Sincroniza o horário
+  syncTime();
 }
 
 void loop() {
@@ -41,6 +56,8 @@ void loop() {
   
   // Get current timestamp
   time_t timestamp = time(nullptr);
+  Serial.print("Timestamp: ");
+  Serial.println(timestamp);
   
   // Create JSON document
   DynamicJsonDocument doc(1024);
